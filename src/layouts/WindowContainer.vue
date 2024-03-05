@@ -1,11 +1,143 @@
 <script lang="ts" setup>
+import { ipcRenderer, IpcRendererEvent, SaveDialogSyncOptions } from 'electron'
+import { nanoid } from 'nanoid'
+import { Close, Subtract, Copy } from "@vicons/carbon";
 
+type TabItem = {id: string, path: string}
+
+const pages = [
+  {path: '/Home'},
+  {path: '/About'},
+]
+const tabs = ref<TabItem[]>([])
+const activeTabId = ref('')
+
+const openView = (page: {path: string}) => {
+  const id = nanoid()
+  ipcRenderer.send('create-view', id, page.path)
+  tabs.value.push({path: page.path, id})
+  activeTabId.value = id
+}
+const remove = (id: string) => {
+  console.log('close');
+  ipcRenderer.send('remove-view', id)
+  tabs.value = tabs.value.filter(item => item.id !== id)
+}
+
+const switchTab = (id: string) => {
+  activeTabId.value = id
+  ipcRenderer.send('switch-view', id)
+}
+
+onMounted(() => {
+  ipcRenderer.on('get-views-return', (e: IpcRendererEvent, views: TabItem[]) => {
+    console.log(views, 'return')
+    tabs.value = views
+  })
+  const a = ipcRenderer.send('get-views')
+})
 </script>
 
 <template>
-  <div>这是容器</div>
+<div class="flex flex-col h-full w-full overflow-hidden">
+  <div class="title-bar">
+    <img src="@/assets/electron.svg" class="logo">
+    <ul class="tabs" :style="{gridTemplateColumns: `repeat(${tabs.length + 1}, 1fr)`}">
+      <li :class="{'tab-item': true, active: activeTabId === ''}" @click="switchTab('')">容器页</li>
+      <li v-for="item in tabs" :key="item.id" :class="{'tab-item': true, active: activeTabId === item.id}" @click="switchTab(item.id)">
+        {{ item.name || item.path }}
+        <el-icon class="icon"  @click.stop="remove(item.id)">
+          <Close />
+        </el-icon>
+      </li>
+    </ul>
+    <div class="controls">
+
+      <el-icon class="icon">
+        <Subtract />
+      </el-icon>
+      <el-icon class="icon">
+        <Copy />
+      </el-icon>
+      <el-icon class="icon error">
+        <Close />
+      </el-icon>
+    </div>
+  </div>
+   <h1>这是容器{{ activeTabId }}</h1> 
+    <div class="links">
+      <span v-for="page in pages" :key="page.path" @click="openView(page)">
+        {{ page.name || page.path }}
+      </span>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+$radius: 4px;
+$h: 42px;
+.title-bar {
+  @apply flex w-full items-center relative overflow-hidden;
+  height: $h;
+  background-color: var(--background-page);
+  -webkit-app-region: drag;
+  .logo {
+    @apply h-5 mx-4;
+    transform: translateY(2px);
+  }
+  .tabs {
+    @apply grid;
+    height: calc(100% - 8px);
+    max-width: fit-content;
+    transform: translateY(4px);
+    -webkit-app-region: no-drag;
+    .tab-item {
+      @apply cursor-pointer flex h-full px-2 transition items-center whitespace-nowrap;
+      border-radius: $radius $radius 0 0;
+      font-size: 14px;
+      color: var(--text-color-secondary);
+      &:hover {
+        color: var(--color-primary);
+      }
+      &.active {
+        background-color: var(--fill-color-darker);
+        color: var(--text-color)
+      }
+      .icon {
+        @apply h-18px ml-2 transition w-18px;
+        border-radius: 50%;
+        &:hover {
+          background-color: var(--fill-color);
+        }
+      }
+    }
+  }
 
+  .controls {
+    @apply h-full ml-auto whitespace-nowrap;
+    -webkit-app-region: no-drag;
+    .icon {
+      @apply cursor-pointer h-full transition;
+      width: $h;
+      color: var(--text-color-secondary);
+      &.error:hover {
+        background-color: var(--color-error);
+      }
+      &:hover {
+        background-color: var(--fill-color);
+        color: var(--text-color);
+      }
+    }
+  }
+
+  // &::after {
+  //   @apply h-4px w-full bottom-1px left-0 absolute;
+  //   content: '';
+  //   background-color: var(--fill-color-darker);
+  //   border-radius: $radius $radius 0 0;
+  // }
+}
+.links {
+  @apply flex flex-col flex-1;
+}
 </style>

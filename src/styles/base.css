@@ -1,0 +1,10 @@
+:root {
+  font-size: 16px;
+}
+#app {
+  @apply h-100vh w-100vw overflow-hidden;
+  background-color: var(--fill-color-darker);
+}
+* {
+  color: white;
+}

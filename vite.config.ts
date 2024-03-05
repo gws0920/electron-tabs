@@ -4,7 +4,12 @@ import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
 import AutoImport from 'unplugin-auto-import/vite'
-
+import { resolve } from 'path'
+import WindiCSS from 'vite-plugin-windicss'
+import renderer from 'vite-plugin-electron-renderer'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import';
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   fs.rmSync('dist-electron', { recursive: true, force: true })
@@ -69,7 +74,7 @@ export default defineConfig(({ command }) => {
           // '@vueuse/head',
           // '@vueuse/core',
         ],
-        // resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver()],
         dts: 'src/auto-imports.d.ts',
         vueTemplate: true,
         dirs: [
@@ -80,7 +85,39 @@ export default defineConfig(({ command }) => {
           enabled: true,
         }
       }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
+      createStyleImportPlugin({
+        resolves: [ElementPlusResolve()],
+        libs: [
+          {
+            libraryName: 'element-plus',
+            esModule: true,
+            resolveStyle: (name: string) => {
+              return `element-plus/theme-chalk/${name}.css`
+            },
+          }
+        ]
+      }),
+      WindiCSS(),
+      renderer()
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // additionalData: '@import "@/styles/var.scss";'
+        }
+      }
+    },
+    resolve: {
+      alias: [
+        {
+          find: '@',
+          replacement: resolve(__dirname, './src')
+        },
+      ]
+    },
     server: process.env.VSCODE_DEBUG && (() => {
       const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
       return {
