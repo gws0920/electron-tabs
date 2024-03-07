@@ -34,11 +34,6 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
-// Here, you can also use other preload
-const preload = join(__dirname, '../preload/index.mjs')
-const url = process.env.VITE_DEV_SERVER_URL
-const indexHtml = join(process.env.DIST, 'index.html')
-
 const winManager = new WinManager()
 
 app.whenReady().then(() => {
@@ -46,16 +41,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  win = null
   if (process.platform !== 'darwin') app.quit()
-})
-
-app.on('second-instance', () => {
-  if (win) {
-    // Focus on the main window if the user tried to open another
-    if (win.isMinimized()) win.restore()
-    win.focus()
-  }
 })
 
 app.on('activate', () => {
