@@ -24,8 +24,8 @@ const goPage = (path: string, inTab?: boolean) => {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-2">
-    <h1>这是Other页</h1>
+  <div class="grid gap-2 grid-cols-1">
+    <h1>这是User页</h1>
     <el-button-group>
       <el-button type="primary" @click="updateTabSate({loading: true})">显示Loading</el-button>
       <el-button type="primary" @click="updateTabSate({loading: false})">关闭Loading</el-button>
@@ -36,7 +36,6 @@ const goPage = (path: string, inTab?: boolean) => {
     </el-button-group>
 
     <el-button-group>
-      <el-button bg text @click="goPage('/Home', false)">打开Home页 (当前页)</el-button>
       <el-button bg text @click="goPage('/Home', true)">打开Home页 (Tab)</el-button>
     </el-button-group>
 

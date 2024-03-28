@@ -26,7 +26,7 @@ const showProgress = () =>{
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-2">
+  <div class="grid gap-2 grid-cols-1">
     <h1>首页</h1>
     <el-button type="primary" @click="count++">点击计数: {{ count }}</el-button>
 
@@ -44,7 +44,7 @@ const showProgress = () =>{
     </el-button-group>
 
     <el-button-group>
-      <el-button bg text @click="goPage('/Other', true)">打开Other页 (Tab)</el-button>
+      <el-button bg text @click="goPage('/User', true)">打开User页 (Tab)</el-button>
     </el-button-group>
   </div>
 </template>

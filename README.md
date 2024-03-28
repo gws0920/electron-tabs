@@ -26,11 +26,64 @@ win.setBrowserView(view)
 view.setBounds({ x: 0, y: 0, width: 300, height: 300 })
 view.webContents.loadURL('https://electronjs.org')
 ```
+## 使用说明
+### 添加Tab页、显示Loading、显示进度条、更新Tab内容
+```ts
+import { createTab, updateTabSate, updateTabs } from "@/components/PageTabs/utils";
+
+// 创建tab页
+createTab(path)
+
+// 显示Loading
+updateTabSate({loading: true})
+
+// 显示进度条(显示进度条时，必须设置loading: true)
+updateTabSate({progress: 0.5, loading: true})
+
+// 更新Tab内容, 一般用于view路由变化后，更新tab标题及图标
+router.push('/Home').then(() => updateTabs())
+```
+
+### Tab 标题及图标说明
+通过url参数、route.meta、route.name等属性，自动生成tab标题及图标（按优先级排序）：
+1. `route.query.title`
+2. `route.query.name`
+3. `route.meta.title`
+4. `route.path`
+```ts
+// path 是BrowserView的路由地址，如：/Home
+// view.webContents.getURL().replace((app.isPackaged ? INDEX_HTML : ROOT_URL) + '/#', '')
+const path = '/Home'
+const route = router.resolve(path)
+const { title, name } = route.query
+return {
+  ...item,
+  title: !path && loading ? '加载中...' : (title || name || route?.meta?.title || path) as string,
+  icon: route.meta?.icon
+}
+```
+Routes示例
+```ts
+import { RouteRecordRaw } from 'vue-router';
+import UserPage from '../pages/User.vue';
+import { User } from '@vicons/carbon';
+
+const routes: RouteRecordRaw[] = [
+  { 
+    path: '/User', 
+    component: UserPage, 
+    meta: { title: 'User页', icon: shallowRef(User) }
+  },
+]
+
+export default routes
+```
 
 ## TODO:
 - [ ] tab拖拽排序
 - [ ] 拖拽tab到窗口外，新建一个窗口
 - [ ] 拖拽tab到另一个窗口的tab上，移动view
-- [-] Tab Loading状态
-- [-] Tab 进度条
-- [-] 基于Route自动显示Tab标题及图标
+- [x] 根据路由自动生成tab标题及图标
+- [x] Tab Loading状态
+- [x] Tab 进度条
+- [x] 基于Route自动显示Tab标题及图标
