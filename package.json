@@ -28,7 +28,7 @@
     "@vicons/carbon": "^0.12.0",
     "@vitejs/plugin-vue": "^5.0.1",
     "consola": "^3.2.3",
-    "electron": "^28.2.5",
+    "electron": "^29.1.0",
     "electron-builder": "^24.9.1",
     "sass": "^1.71.1",
     "tree-kill": "^1.2.2",
