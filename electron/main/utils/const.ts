@@ -8,4 +8,4 @@ export const PRELOAD = join(__dirname, '../preload/index.mjs')
 export const ROOT_URL = process.env.VITE_DEV_SERVER_URL
 export const DIST = join(__dirname, '../../dist')
 export const INDEX_HTML = join(DIST, 'index.html')
-export const TITLE_BAR_HEIGHT = 46
+export const TITLE_BAR_HEIGHT = 42

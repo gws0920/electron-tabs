@@ -1,10 +1,14 @@
 :root {
   font-size: 16px;
 }
-#app {
-  @apply h-100vh w-100vw overflow-hidden;
-  background-color: var(--fill-color-darker);
-}
+
 * {
-  color: white;
+  color: var(--text-color);
+}
+body {
+  @apply flex flex-col overflow-hidden w-100vw h-100vh;
+  #app {
+    @apply flex-1 h-0;
+    background-color: var(--background-page);
+  }
 }

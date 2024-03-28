@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell, ipcMain, IpcMainEvent, BrowserView } from 'e
 import { release } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import WinManager from './winManager';
+import TabManager from './TabManager';
 
 globalThis.__filename = fileURLToPath(import.meta.url)
 globalThis.__dirname = dirname(__filename)
@@ -34,7 +34,7 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
-const winManager = new WinManager()
+const winManager = new TabManager()
 
 app.whenReady().then(() => {
   winManager.createWindow()

@@ -71,14 +71,14 @@ export default defineConfig(({ command }) => {
         imports: [
           'vue',
           'vue-router',
-          // '@vueuse/head',
-          // '@vueuse/core',
+          '@vueuse/head',
+          '@vueuse/core',
         ],
         resolvers: [ElementPlusResolver()],
         dts: 'src/auto-imports.d.ts',
         vueTemplate: true,
         dirs: [
-          // 'src/utils',
+          'src/utils',
           // 'src/store',
         ],
         eslintrc: {
